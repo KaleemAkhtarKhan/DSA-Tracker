@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA 100 Challenges</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="logo.png">
+    <!-- Chosen Palette: Calm Harmony (Stone neutrals with a Teal accent) -->
+    <!-- Application Structure Plan: A thematic tab-based single-page application. Problems are grouped by data structure/algorithm topic (e.g., Arrays, Trees, DP) rather than by week. This structure allows for focused, pattern-based learning, which is more effective for interview preparation. The user can tackle one topic at a time. Key interactions include checking off problems to update both topic-specific and overall progress bars, providing clear, motivating feedback. A new expandable study guide has been added for user guidance. Dark mode is included for user comfort. -->
+    <!-- Visualization & Content Choices: Report Info: A curated list of 100 DSA problems. Goal: Track completion and master key patterns. Viz/Presentation Method: Interactive checklists grouped into expandable sections/tabs by topic. Interaction: Clicking a checkbox marks a problem as completed, updates progress visuals, and persists the state. Justification: This focused, thematic structure is superior to a weekly plan for a master list, as it encourages deep-diving into one pattern at a time, which is crucial for interview success. Library/Method: Vanilla JS for all logic. Progress bars are custom HTML/CSS elements. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script>
+        // Set theme on initial load
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Light Mode Active Tab */
+        .tab-active {
+            border-color: #260d94; /* teal-600 */
+            background-color: #0ddaaa; /* teal-50 */
+            color: #4e1313; /* teal-900 */
+            font-weight: 600;
+        }
+        /* Dark Mode Active Tab */
+        .dark .tab-active {
+            border-color: #2dd4bf; /* teal-400 */
+            background-color: #115e59; /* teal-800 */
+            color: #f0fdfa; /* teal-50 */
+        }
+        .problem-list-item.completed label {
+            text-decoration: line-through;
+            color: #64748b; /* slate-500 */
+        }
+        .dark .problem-list-item.completed label {
+            color: #475569; /* slate-600 */
+        }
+        .progress-bar-inner {
+            transition: width 0.5s ease-in-out;
+        }
+        .guide-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .guide-content.open {
+            max-height: 1000px; /* Adjust as needed */
+        }
+        .guide-toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .guide-toggle.open .guide-toggle-icon {
+            transform: rotate(180deg);
+        }
+        .dark {
+            background-color: #000 !important;
+            color: #fff !important;
+        }
+        .dark body {
+            background-color: #000 !important;
+            color: #fff !important;
+        }
+        .dark .container {
+            background-color: transparent !important;
+        }
+        .dark .bg-white,
+        .dark .bg-stone-100,
+        .dark .bg-slate-800,
+        .dark .bg-slate-900 {
+            background-color: #000 !important; 
+            color: #fff !important;
+        }
+        .dark .p-6,
+        .dark .rounded-2xl,
+        .dark .shadow-lg {
+            background-color: #18181b !important;
+        }
+        .dark .border-slate-200,
+        .dark .border-slate-700 {
+            border-color: #222 !important;
+        }
+        .dark .text-slate-800,
+        .dark .text-slate-900,
+        .dark .text-slate-700,
+        .dark .text-slate-600,
+        .dark .text-slate-400,
+        .dark .text-slate-200,
+        .dark .text-slate-300,
+        .dark .text-slate-500 {
+            color: #fff !important;
+        }
+    </style>
+</head>
+<body class="bg-stone-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+
+    <div class="container mx-auto max-w-6xl p-4 sm:p-6 md:p-8">
+        
+        <header class="relative flex flex-col items-center justify-center mb-6">
+            <!-- Logo -->
+            <img src="logoo.png" alt="DSA Tracker Logo" class="w-16 h-16 mb-2 rounded-full shadow-lg">
+
+            <!-- Theme Toggle Button -->
+            <button id="theme-toggle"
+                class="mx-auto mb-2 sm:mb-0 sm:mx-0 sm:absolute sm:top-2 sm:right-2 p-3 rounded-full 
+                bg-white shadow-md dark:bg-transparent dark:shadow-none
+                text-slate-500 dark:text-slate-400
+                hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2
+                focus:ring-offset-stone-100 dark:focus:ring-offset-slate-900 focus:ring-teal-500
+                transition-all duration-200 z-20"
+                aria-label="Toggle dark mode">
+                <span id="theme-icon-light" class="w-6 h-6">🔆</span>
+                <span id="theme-icon-dark" class="w-6 h-6 hidden">🌙</span>
+            </button>
+
+            <h1 class="mt-4 sm:mt-10 text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white text-center">
+                Top 100 DSA Challenges for Future SDE
+            </h1>
+            <p class="text-slate-600 dark:text-slate-400 mt-2 text-center">
+                A handpicked set of must-solve problems to master Data Structures & Algorithms and prepare for elite SDE roles (12–15 LPA+) in India.
+            </p>
+        </header>
+
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg mb-8">
+            <button id="guide-toggle" class="guide-toggle w-full flex justify-between items-center p-4 font-semibold text-slate-700 dark:text-slate-200">
+                <span>How to Use This Guide: A Step-by-Step Plan</span>
+                <span class="guide-toggle-icon text-teal-600 dark:text-teal-400">▼</span>
+            </button>
+            <div id="guide-content" class="guide-content">
+                <div class="p-6 border-t border-slate-200 dark:border-slate-700">
+                    <p class="text-slate-600 dark:text-slate-400 mb-4">Follow this topic order to build your knowledge progressively. Focus on understanding the underlying pattern of each problem, not just memorizing the solution.</p>
+                    <ol class="list-decimal list-inside space-y-2 text-slate-700 dark:text-slate-300">
+                        <li><strong>Arrays & Hashing:</strong> The absolute foundation. Master these before anything else.</li>
+                        <li><strong>Two Pointers:</strong> An essential technique for optimizing array and string problems.</li>
+                        <li><strong>Sliding Window:</strong> A powerful pattern for solving problems involving subarrays or substrings.</li>
+                        <li><strong>Stack:</strong> Understand the LIFO principle and its applications (e.g., for parentheses, histograms).</li>
+                        <li><strong>Linked List:</strong> Crucial for understanding memory management and pointer manipulation.</li>
+                        <li><strong>Binary Search:</strong> A must-know for solving problems on sorted data efficiently.</li>
+                        <li><strong>Trees:</strong> Learn traversals (BFS, DFS) and understand properties of different tree types (BSTs).</li>
+                        <li><strong>Tries:</strong> A niche but important structure for string problems involving prefixes.</li>
+                        <li><strong>Heap / Priority Queue:</strong> Perfect for problems involving "top K" elements or scheduling.</li>
+                        <li><strong>Backtracking:</strong> A key recursive technique for exploring all possible solutions (e.g., subsets, permutations).</li>
+                        <li><strong>Graphs:</strong> Learn representations (adjacency list/matrix) and fundamental traversals (BFS, DFS).</li>
+                        <li><strong>Dynamic Programming:</strong> The final boss. Break down complex problems into smaller, repeatable subproblems.</li>
+                        <li><strong>Intervals:</strong> A common problem pattern involving merging and scheduling.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg mb-8 sticky top-4 z-10">
+            <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-2">Overall Progress</h2>
+            <div id="overall-progress-container">
+                <!-- Overall progress bar will be injected here -->
+            </div>
+        </div>
+
+        <main class="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-lg">
+            <div id="tabs-container" class="flex flex-wrap border-b border-slate-200 dark:border-slate-700 mb-6 -mx-4 px-4">
+                <!-- Tabs will be injected here -->
+            </div>
+
+            <div id="content-container">
+                <!-- Content for each topic will be injected here -->
+            </div>
+        </main>
+
+        <footer class="text-center mt-8 text-sm text-slate-500 dark:text-slate-400">
+            <p>Keep up the great work! Consistency is key.</p>
+            <p>Made with ❤️ by <a href="https://www.kaleem.xyz" target="_blank" class="font-semibold text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300 underline">Kaleem</a></p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const problemSet = [
+                {
+                    topic: "Arrays & Hashing",
+                    problems: [
+                        { id: 217, name: "Contains Duplicate", difficulty: "Easy" },
+                        { id: 242, name: "Valid Anagram", difficulty: "Easy" },
+                        { id: 1, name: "Two Sum", difficulty: "Easy" },
+                        { id: 49, name: "Group Anagrams", difficulty: "Medium" },
+                        { id: 347, name: "Top K Frequent Elements", difficulty: "Medium" },
+                        { id: 238, name: "Product of Array Except Self", difficulty: "Medium" },
+                        { id: 36, name: "Valid Sudoku", difficulty: "Medium" },
+                        { id: 128, name: "Longest Consecutive Sequence", difficulty: "Medium" },
+                    ]
+                },
+                {
+                    topic: "Two Pointers",
+                    problems: [
+                        { id: 125, name: "Valid Palindrome", difficulty: "Easy" },
+                        { id: 167, name: "Two Sum II - Input Array Is Sorted", difficulty: "Medium" },
+                        { id: 15, name: "3Sum", difficulty: "Medium" },
+                        { id: 11, name: "Container With Most Water", difficulty: "Medium" },
+                        { id: 42, name: "Trapping Rain Water", difficulty: "Hard" },
+                    ]
+                },
+                {
+                    topic: "Sliding Window",
+                    problems: [
+                        { id: 121, name: "Best Time to Buy and Sell Stock", difficulty: "Easy" },
+                        { id: 3, name: "Longest Substring Without Repeating Characters", difficulty: "Medium" },
+                        { id: 424, name: "Longest Repeating Character Replacement", difficulty: "Medium" },
+                        { id: 567, name: "Permutation in String", difficulty: "Medium" },
+                        { id: 76, name: "Minimum Window Substring", difficulty: "Hard" },
+                    ]
+                },
+                {
+                    topic: "Stack",
+                    problems: [
+                        { id: 20, name: "Valid Parentheses", difficulty: "Easy" },
+                        { id: 155, name: "Min Stack", difficulty: "Medium" },
+                        { id: 150, name: "Evaluate Reverse Polish Notation", difficulty: "Medium" },
+                        { id: 22, name: "Generate Parentheses", difficulty: "Medium" },
+                        { id: 739, name: "Daily Temperatures", difficulty: "Medium" },
+                        { id: 853, name: "Car Fleet", difficulty: "Medium" },
+                        { id: 84, name: "Largest Rectangle in Histogram", difficulty: "Hard" },
+                    ]
+                },
+                {
+                    topic: "Binary Search",
+                    problems: [
+                        { id: 704, name: "Binary Search", difficulty: "Easy" },
+                        { id: 74, name: "Search a 2D Matrix", difficulty: "Medium" },
+                        { id: 875, name: "Koko Eating Bananas", difficulty: "Medium" },
+                        { id: 153, name: "Find Minimum in Rotated Sorted Array", difficulty: "Medium" },
+                        { id: 33, name: "Search in Rotated Sorted Array", difficulty: "Medium" },
+                        { id: 4, name: "Median of Two Sorted Arrays", difficulty: "Hard" },
+                    ]
+                },
+                {
+                    topic: "Linked List",
+                    problems: [
+                        { id: 206, name: "Reverse Linked List", difficulty: "Easy" },
+                        { id: 21, name: "Merge Two Sorted Lists", difficulty: "Easy" },
+                        { id: 141, name: "Linked List Cycle", difficulty: "Easy" },
+                        { id: 143, name: "Reorder List", difficulty: "Medium" },
+                        { id: 19, name: "Remove Nth Node From End of List", difficulty: "Medium" },
+                        { id: 138, name: "Copy List with Random Pointer", difficulty: "Medium" },
+                        { id: 287, name: "Find the Duplicate Number", difficulty: "Medium" },
+                        { id: 146, name: "LRU Cache", difficulty: "Medium" },
+                        { id: 23, name: "Merge k Sorted Lists", difficulty: "Hard" },
+                    ]
+                },
+                {
+                    topic: "Trees",
+                    problems: [
+                        { id: 226, name: "Invert Binary Tree", difficulty: "Easy" },
+                        { id: 104, name: "Maximum Depth of Binary Tree", difficulty: "Easy" },
+                        { id: 100, name: "Same Tree", difficulty: "Easy" },
+                        { id: 572, name: "Subtree of Another Tree", difficulty: "Easy" },
+                        { id: 543, name: "Diameter of Binary Tree", difficulty: "Easy" },
+                        { id: 110, name: "Balanced Binary Tree", difficulty: "Easy" },
+                        { id: 102, name: "Binary Tree Level Order Traversal", difficulty: "Medium" },
+                        { id: 199, name: "Binary Tree Right Side View", difficulty: "Medium" },
+                        { id: 98, name: "Validate Binary Search Tree", difficulty: "Medium" },
+                        { id: 230, name: "Kth Smallest Element in a BST", difficulty: "Medium" },
+                        { id: 105, name: "Construct Binary Tree from Preorder and Inorder Traversal", difficulty: "Medium" },
+                        { id: 235, name: "Lowest Common Ancestor of a BST", difficulty: "Medium" },
+                        { id: 236, name: "Lowest Common Ancestor of a Binary Tree", difficulty: "Medium" },
+                        { id: 124, name: "Binary Tree Maximum Path Sum", difficulty: "Hard" },
+                        { id: 297, name: "Serialize and Deserialize Binary Tree", difficulty: "Hard" },
+                    ]
+                },
+                {
+                    topic: "Tries",
+                    problems: [
+                        { id: 208, name: "Implement Trie (Prefix Tree)", difficulty: "Medium" },
+                        { id: 211, name: "Design Add and Search Words Data Structure", difficulty: "Medium" },
+                        { id: 212, name: "Word Search II", difficulty: "Hard" },
+                    ]
+                },
+                {
+                    topic: "Heap / Priority Queue",
+                    problems: [
+                        { id: 703, name: "Kth Largest Element in a Stream", difficulty: "Easy" },
+                        { id: 1046, name: "Last Stone Weight", difficulty: "Easy" },
+                        { id: 215, name: "Kth Largest Element in an Array", difficulty: "Medium" },
+                        { id: 973, name: "K Closest Points to Origin", difficulty: "Medium" },
+                        { id: 355, name: "Design Twitter", difficulty: "Medium" },
+                        { id: 295, name: "Find Median from Data Stream", difficulty: "Hard" },
+                    ]
+                },
+                {
+                    topic: "Backtracking",
+                    problems: [
+                        { id: 78, name: "Subsets", difficulty: "Medium" },
+                        { id: 39, name: "Combination Sum", difficulty: "Medium" },
+                        { id: 46, name: "Permutations", difficulty: "Medium" },
+                        { id: 90, name: "Subsets II", difficulty: "Medium" },
+                        { id: 40, name: "Combination Sum II", difficulty: "Medium" },
+                        { id: 79, name: "Word Search", difficulty: "Medium" },
+                        { id: 51, name: "N-Queens", difficulty: "Hard" },
+                    ]
+                },
+                {
+                    topic: "Graphs",
+                    problems: [
+                        { id: 200, name: "Number of Islands", difficulty: "Medium" },
+                        { id: 133, name: "Clone Graph", difficulty: "Medium" },
+                        { id: 695, name: "Max Area of Island", difficulty: "Medium" },
+                        { id: 417, name: "Pacific Atlantic Water Flow", difficulty: "Medium" },
+                        { id: 547, name: "Number of Provinces", difficulty: "Medium" },
+                        { id: 207, name: "Course Schedule", difficulty: "Medium" },
+                        { id: 210, name: "Course Schedule II", difficulty: "Medium" },
+                        { id: 261, name: "Graph Valid Tree", difficulty: "Medium" },
+                        { id: 332, name: "Reconstruct Itinerary", difficulty: "Hard" },
+                    ]
+                },
+                {
+                    topic: "Dynamic Programming",
+                    problems: [
+                        { id: 70, name: "Climbing Stairs", difficulty: "Easy" },
+                        { id: 746, name: "Min Cost Climbing Stairs", difficulty: "Easy" },
+                        { id: 198, name: "House Robber", difficulty: "Medium" },
+                        { id: 213, name: "House Robber II", difficulty: "Medium" },
+                        { id: 322, name: "Coin Change", difficulty: "Medium" },
+                        { id: 300, name: "Longest Increasing Subsequence", difficulty: "Medium" },
+                        { id: 1143, name: "Longest Common Subsequence", difficulty: "Medium" },
+                        { id: 139, name: "Word Break", difficulty: "Medium" },
+                        { id: 5, name: "Longest Palindromic Substring", difficulty: "Medium" },
+                        { id: 416, name: "Partition Equal Subset Sum", difficulty: "Medium" },
+                        { id: 62, name: "Unique Paths", difficulty: "Medium" },
+                        { id: 91, name: "Decode Ways", difficulty: "Medium" },
+                        { id: 55, name: "Jump Game", difficulty: "Medium" },
+                    ]
+                },
+                {
+                    topic: "Intervals",
+                    problems: [
+                        { id: 252, name: "Meeting Rooms", difficulty: "Easy" },
+                        { id: 57, name: "Insert Interval", difficulty: "Medium" },
+                        { id: 56, name: "Merge Intervals", difficulty: "Medium" },
+                        { id: 435, name: "Non-overlapping Intervals", difficulty: "Medium" },
+                        { id: 253, name: "Meeting Rooms II", difficulty: "Medium" },
+                    ]
+                }
+            ];
+
+            const tabsContainer = document.getElementById('tabs-container');
+            const contentContainer = document.getElementById('content-container');
+            const overallProgressContainer = document.getElementById('overall-progress-container');
+            const guideToggle = document.getElementById('guide-toggle');
+            const guideContent = document.getElementById('guide-content');
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIconLight = document.getElementById('theme-icon-light');
+            const themeIconDark = document.getElementById('theme-icon-dark');
+            let state = {};
+
+            function getDifficultyClass(difficulty) {
+                switch (difficulty) {
+                    case 'Easy': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+                    case 'Medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+                    case 'Hard': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+                    default: return 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300';
+                }
+            }
+            
+            function loadState() {
+                try {
+                    const savedState = localStorage.getItem('ultimate100DSAState');
+                    if (savedState) {
+                        state = JSON.parse(savedState);
+                    } else {
+                        problemSet.forEach(topic => {
+                            state[topic.topic] = {};
+                            topic.problems.forEach(p => {
+                                state[topic.topic][p.id] = false;
+                            });
+                        });
+                    }
+                } catch (e) {
+                    console.error("Could not load state from localStorage", e);
+                }
+            }
+
+            function saveState() {
+                try {
+                    localStorage.setItem('ultimate100DSAState', JSON.stringify(state));
+                } catch (e) {
+                    console.error("Could not save state to localStorage", e);
+                }
+            }
+
+            function render() {
+                loadState();
+                
+                tabsContainer.innerHTML = '';
+                contentContainer.innerHTML = '';
+
+                problemSet.forEach((topicData, index) => {
+                    const tabId = `topic-${topicData.topic.replace(/ \/ /g, '-').replace(/ /g, '-')}`;
+                    const tab = document.createElement('button');
+                    tab.className = `py-3 px-4 sm:px-5 text-sm sm:text-base border-b-2 -mb-px focus:outline-none transition-colors duration-200 ${index === 0 ? 'tab-active' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:border-slate-600'}`;
+                    tab.textContent = topicData.topic;
+                    tab.dataset.topic = topicData.topic;
+                    tabsContainer.appendChild(tab);
+
+                    const content = document.createElement('div');
+                    content.id = tabId;
+                    content.className = index !== 0 ? 'hidden' : '';
+                    
+                    let problemsHtml = topicData.problems.map(p => {
+                        const isChecked = state[topicData.topic] && state[topicData.topic][p.id];
+                        return `
+                            <li class="problem-list-item flex items-center justify-between p-3 hover:bg-stone-50 dark:hover:bg-slate-700/50 rounded-lg ${isChecked ? 'completed' : ''}">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="problem-${p.id}" data-topic="${topicData.topic}" data-problem-id="${p.id}" class="h-5 w-5 rounded border-slate-300 dark:border-slate-600 text-teal-600 dark:text-teal-500 bg-transparent dark:bg-slate-700 focus:ring-teal-500 dark:focus:ring-teal-600 dark:focus:ring-offset-slate-800 cursor-pointer" ${isChecked ? 'checked' : ''}>
+                                    <label for="problem-${p.id}" class="ml-3 text-slate-700 dark:text-slate-300 cursor-pointer">
+                                        <a href="https://leetcode.com/problems/${p.name.toLowerCase().replace(/\s+/g, '-')}/" target="_blank" class="hover:underline hover:text-teal-600 dark:hover:text-teal-400">
+                                            ${p.name}
+                                        </a>
+                                    </label>
+                                </div>
+                                <span class="text-xs font-medium px-2 py-1 rounded-full ${getDifficultyClass(p.difficulty)}">${p.difficulty}</span>
+                            </li>
+                        `;
+                    }).join('');
+
+                    content.innerHTML = `
+                        <div id="progress-container-${tabId}" class="mb-6"></div>
+                        <ul class="space-y-2">${problemsHtml}</ul>
+                    `;
+                    contentContainer.appendChild(content);
+                });
+                
+                renderAllProgressBars();
+                updateThemeIcon();
+            }
+            
+            function renderProgressBar(container, completed, total, label) {
+                const percentage = total > 0 ? (completed / total) * 100 : 0;
+                container.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">${label}: ${completed} / ${total} completed</span>
+                        <span class="text-sm font-bold text-teal-700 dark:text-teal-400">${Math.round(percentage)}%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
+                        <div class="bg-teal-500 dark:bg-teal-600 h-2.5 rounded-full progress-bar-inner" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+            }
+
+            function renderAllProgressBars() {
+                let totalProblems = 0;
+                let totalCompleted = 0;
+
+                problemSet.forEach(topicData => {
+                    const tabId = `topic-${topicData.topic.replace(/ \/ /g, '-').replace(/ /g, '-')}`;
+                    const topicContainer = document.getElementById(`progress-container-${tabId}`);
+                    const topicProblems = topicData.problems;
+                    const completedProblems = topicProblems.filter(p => state[topicData.topic] && state[topicData.topic][p.id]).length;
+                    
+                    totalProblems += topicProblems.length;
+                    totalCompleted += completedProblems;
+
+                    if(topicContainer) {
+                        renderProgressBar(topicContainer, completedProblems, topicProblems.length, 'Topic Progress');
+                    }
+                });
+
+                renderProgressBar(overallProgressContainer, totalCompleted, totalProblems, 'Overall Progress');
+            }
+
+            function updateThemeIcon() {
+                if (document.documentElement.classList.contains('dark')) {
+                    themeIconLight.classList.add('hidden');
+                    themeIconDark.classList.remove('hidden');
+                } else {
+                    themeIconLight.classList.remove('hidden');
+                    themeIconDark.classList.add('hidden');
+                }
+            }
+
+            tabsContainer.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const topicToShow = e.target.dataset.topic;
+
+                    tabsContainer.querySelectorAll('button').forEach(tab => {
+                        tab.classList.remove('tab-active');
+                        tab.classList.add('border-transparent', 'text-slate-500', 'hover:text-slate-700', 'dark:text-slate-400', 'dark:hover:text-slate-200', 'dark:hover:border-slate-600');
+                    });
+                    e.target.classList.add('tab-active');
+                    e.target.classList.remove('border-transparent', 'text-slate-500', 'hover:text-slate-700', 'dark:text-slate-400', 'dark:hover:text-slate-200', 'dark:hover:border-slate-600');
+
+                    contentContainer.querySelectorAll('div[id^="topic-"]').forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(`topic-${topicToShow.replace(/ \/ /g, '-').replace(/ /g, '-')}`).classList.remove('hidden');
+                }
+            });
+
+            contentContainer.addEventListener('change', (e) => {
+                if (e.target.type === 'checkbox') {
+                    const topic = e.target.dataset.topic;
+                    const problemId = e.target.dataset.problemId;
+                    const isChecked = e.target.checked;
+                    
+                    if (!state[topic]) {
+                        state[topic] = {};
+                    }
+                    state[topic][problemId] = isChecked;
+                    saveState();
+                    
+                    e.target.closest('.problem-list-item').classList.toggle('completed', isChecked);
+                    renderAllProgressBars();
+                }
+            });
+
+            guideToggle.addEventListener('click', () => {
+                guideContent.classList.toggle('open');
+                guideToggle.classList.toggle('open');
+            });
+
+            themeToggle.addEventListener('click', () => {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.theme = 'light';
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.theme = 'dark';
+                }
+                updateThemeIcon();
+            });
+
+            render();
+        });
+    </script>
+
+</body>
+</html>
