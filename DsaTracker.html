@@ -27,9 +27,9 @@
         }
         /* Light Mode Active Tab */
         .tab-active {
-            border-color: #260d94; /* teal-600 */
-            background-color: #0ddaaa; /* teal-50 */
-            color: #4e1313; /* teal-900 */
+            border-color: #260d94; /* Custom Color */
+            background-color: #0ddaaa; /* Custom Color */
+            color: #4e1313; /* Custom Color */
             font-weight: 600;
         }
         /* Dark Mode Active Tab */
@@ -38,11 +38,11 @@
             background-color: #115e59; /* teal-800 */
             color: #f0fdfa; /* teal-50 */
         }
-        .problem-list-item.completed label {
+        .problem-list-item.completed label a {
             text-decoration: line-through;
             color: #64748b; /* slate-500 */
         }
-        .dark .problem-list-item.completed label {
+        .dark .problem-list-item.completed label a {
             color: #475569; /* slate-600 */
         }
         .progress-bar-inner {
@@ -99,36 +99,56 @@
         .dark .text-slate-500 {
             color: #fff !important;
         }
+        @keyframes glow-pulse {
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 0 8px #14b8a6, 0 0 12px #2dd4bf;
+            }
+        }
+        .animate-glow-pulse {
+            animation: glow-pulse 3s infinite ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-stone-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
 
     <div class="container mx-auto max-w-6xl p-4 sm:p-6 md:p-8">
         
-        <header class="relative flex flex-col items-center justify-center mb-6">
-            <!-- Logo -->
-            <img src="logoo.png" alt="DSA Tracker Logo" class="w-16 h-16 mb-2 rounded-full shadow-lg">
+        <header class="relative flex flex-wrap items-center justify-center sm:justify-between mb-6 gap-4">
+            <!-- Left side: GitHub Button -->
+            <div class="w-full sm:w-auto flex justify-center sm:justify-start sm:absolute sm:top-1/2 sm:-translate-y-1/2 sm:left-0 z-20">
+                <a href="https://github.com/KaleemAkhtarKhan" target="_blank"
+                   class="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-800 shadow-md text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors animate-glow-pulse"
+                   aria-label="Star on GitHub">
+                    <span>★</span>
+                    <span class="font-semibold text-sm">Star on GitHub</span>
+                </a>
+            </div>
 
-            <!-- Theme Toggle Button -->
-            <button id="theme-toggle"
-                class="mx-auto mb-2 sm:mb-0 sm:mx-0 sm:absolute sm:top-2 sm:right-2 p-3 rounded-full 
-                bg-white shadow-md dark:bg-transparent dark:shadow-none
-                text-slate-500 dark:text-slate-400
-                hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2
-                focus:ring-offset-stone-100 dark:focus:ring-offset-slate-900 focus:ring-teal-500
-                transition-all duration-200 z-20"
-                aria-label="Toggle dark mode">
-                <span id="theme-icon-light" class="w-6 h-6">🔆</span>
-                <span id="theme-icon-dark" class="w-6 h-6 hidden">🌙</span>
-            </button>
-
-            <h1 class="mt-4 sm:mt-10 text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white text-center">
-                Top 100 DSA Challenges for Future SDE
-            </h1>
-            <p class="text-slate-600 dark:text-slate-400 mt-2 text-center">
-                A handpicked set of must-solve problems to master Data Structures & Algorithms and prepare for elite SDE roles (12–15 LPA+) in India.
-            </p>
+            <!-- Center: Logo and Title Section -->
+            <div class="flex flex-col items-center text-center order-first sm:order-none w-full">
+                <img src="logoo.png" alt="DSA Tracker Logo" class="w-16 h-16 rounded-full shadow-lg mb-2">
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+                    Top 100 DSA Challenges for Future SDE
+                </h1>
+            </div>
+            
+            <!-- Right side: Theme Toggle Button -->
+            <div class="w-full sm:w-auto flex justify-center sm:justify-end sm:absolute sm:top-1/2 sm:-translate-y-1/2 sm:right-0 z-20">
+                <button id="theme-toggle"
+                    class="p-3 rounded-full 
+                    bg-white shadow-md dark:bg-slate-800
+                    text-slate-500 dark:text-slate-400
+                    hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2
+                    focus:ring-offset-stone-100 dark:focus:ring-offset-slate-900 focus:ring-teal-500
+                    transition-all duration-200"
+                    aria-label="Toggle dark mode">
+                    <span id="theme-icon-light" class="w-6 h-6">🔆</span>
+                    <span id="theme-icon-dark" class="w-6 h-6 hidden">🌙</span>
+                </button>
+            </div>
         </header>
+
 
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg mb-8">
             <button id="guide-toggle" class="guide-toggle w-full flex justify-between items-center p-4 font-semibold text-slate-700 dark:text-slate-200">
@@ -164,13 +184,19 @@
             </div>
         </div>
 
-        <main class="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-lg">
+        <main id="main-content" class="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-lg">
+             <div class="mb-6">
+                <input type="search" id="search-input" placeholder="Search all 100 problems..." class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            </div>
             <div id="tabs-container" class="flex flex-wrap border-b border-slate-200 dark:border-slate-700 mb-6 -mx-4 px-4">
                 <!-- Tabs will be injected here -->
             </div>
 
             <div id="content-container">
                 <!-- Content for each topic will be injected here -->
+            </div>
+            <div id="search-results-container" class="hidden">
+                <!-- Search results will be injected here -->
             </div>
         </main>
 
@@ -349,14 +375,17 @@
                 }
             ];
 
+            const mainContent = document.getElementById('main-content');
             const tabsContainer = document.getElementById('tabs-container');
             const contentContainer = document.getElementById('content-container');
+            const searchResultsContainer = document.getElementById('search-results-container');
             const overallProgressContainer = document.getElementById('overall-progress-container');
             const guideToggle = document.getElementById('guide-toggle');
             const guideContent = document.getElementById('guide-content');
             const themeToggle = document.getElementById('theme-toggle');
             const themeIconLight = document.getElementById('theme-icon-light');
             const themeIconDark = document.getElementById('theme-icon-dark');
+            const searchInput = document.getElementById('search-input');
             let state = {};
 
             function getDifficultyClass(difficulty) {
@@ -393,6 +422,10 @@
                     console.error("Could not save state to localStorage", e);
                 }
             }
+            
+            function generateLeetcodeUrl(problemName) {
+                 return `https://leetcode.com/problems/${problemName.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')}/`;
+            }
 
             function render() {
                 loadState();
@@ -414,12 +447,13 @@
                     
                     let problemsHtml = topicData.problems.map(p => {
                         const isChecked = state[topicData.topic] && state[topicData.topic][p.id];
+                        const leetcodeUrl = generateLeetcodeUrl(p.name);
                         return `
                             <li class="problem-list-item flex items-center justify-between p-3 hover:bg-stone-50 dark:hover:bg-slate-700/50 rounded-lg ${isChecked ? 'completed' : ''}">
                                 <div class="flex items-center">
                                     <input type="checkbox" id="problem-${p.id}" data-topic="${topicData.topic}" data-problem-id="${p.id}" class="h-5 w-5 rounded border-slate-300 dark:border-slate-600 text-teal-600 dark:text-teal-500 bg-transparent dark:bg-slate-700 focus:ring-teal-500 dark:focus:ring-teal-600 dark:focus:ring-offset-slate-800 cursor-pointer" ${isChecked ? 'checked' : ''}>
                                     <label for="problem-${p.id}" class="ml-3 text-slate-700 dark:text-slate-300 cursor-pointer">
-                                        <a href="https://leetcode.com/problems/${p.name.toLowerCase().replace(/\s+/g, '-')}/" target="_blank" class="hover:underline hover:text-teal-600 dark:hover:text-teal-400">
+                                        <a href="${leetcodeUrl}" target="_blank" class="hover:underline hover:text-teal-600 dark:hover:text-teal-400">
                                             ${p.name}
                                         </a>
                                     </label>
@@ -431,7 +465,7 @@
 
                     content.innerHTML = `
                         <div id="progress-container-${tabId}" class="mb-6"></div>
-                        <ul class="space-y-2">${problemsHtml}</ul>
+                        <ul class="space-y-2 problem-list">${problemsHtml}</ul>
                     `;
                     contentContainer.appendChild(content);
                 });
@@ -499,10 +533,12 @@
                         content.classList.add('hidden');
                     });
                     document.getElementById(`topic-${topicToShow.replace(/ \/ /g, '-').replace(/ /g, '-')}`).classList.remove('hidden');
+                    searchInput.value = '';
+                    handleSearch();
                 }
             });
 
-            contentContainer.addEventListener('change', (e) => {
+            mainContent.addEventListener('change', (e) => {
                 if (e.target.type === 'checkbox') {
                     const topic = e.target.dataset.topic;
                     const problemId = e.target.dataset.problemId;
@@ -514,7 +550,13 @@
                     state[topic][problemId] = isChecked;
                     saveState();
                     
-                    e.target.closest('.problem-list-item').classList.toggle('completed', isChecked);
+                    // Update both views if the element exists
+                    const originalListItem = contentContainer.querySelector(`#problem-${problemId}`)?.closest('.problem-list-item');
+                    const searchListItem = searchResultsContainer.querySelector(`#problem-search-${problemId}`)?.closest('.problem-list-item');
+
+                    if(originalListItem) originalListItem.classList.toggle('completed', isChecked);
+                    if(searchListItem) searchListItem.classList.toggle('completed', isChecked);
+
                     renderAllProgressBars();
                 }
             });
@@ -534,6 +576,48 @@
                 }
                 updateThemeIcon();
             });
+
+            function handleSearch() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                
+                if (searchTerm) {
+                    tabsContainer.classList.add('hidden');
+                    contentContainer.classList.add('hidden');
+                    searchResultsContainer.classList.remove('hidden');
+
+                    let searchResultsHtml = '';
+                    problemSet.forEach(topicData => {
+                        topicData.problems.forEach(p => {
+                            if (p.name.toLowerCase().includes(searchTerm)) {
+                                const isChecked = state[topicData.topic] && state[topicData.topic][p.id];
+                                const leetcodeUrl = generateLeetcodeUrl(p.name);
+                                searchResultsHtml += `
+                                    <li class="problem-list-item flex items-center justify-between p-3 hover:bg-stone-50 dark:hover:bg-slate-700/50 rounded-lg ${isChecked ? 'completed' : ''}">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="problem-search-${p.id}" data-topic="${topicData.topic}" data-problem-id="${p.id}" class="h-5 w-5 rounded border-slate-300 dark:border-slate-600 text-teal-600 dark:text-teal-500 bg-transparent dark:bg-slate-700 focus:ring-teal-500 dark:focus:ring-teal-600 dark:focus:ring-offset-slate-800 cursor-pointer" ${isChecked ? 'checked' : ''}>
+                                            <label for="problem-search-${p.id}" class="ml-3 text-slate-700 dark:text-slate-300 cursor-pointer">
+                                                <a href="${leetcodeUrl}" target="_blank" class="hover:underline hover:text-teal-600 dark:hover:text-teal-400">
+                                                    ${p.name}
+                                                </a>
+                                                <span class="ml-2 text-xs text-slate-500 dark:text-slate-400">(${topicData.topic})</span>
+                                            </label>
+                                        </div>
+                                        <span class="text-xs font-medium px-2 py-1 rounded-full ${getDifficultyClass(p.difficulty)}">${p.difficulty}</span>
+                                    </li>
+                                `;
+                            }
+                        });
+                    });
+                    searchResultsContainer.innerHTML = `<ul class="space-y-2">${searchResultsHtml || '<li class="text-center text-slate-500 dark:text-slate-400 p-4">No problems found.</li>'}</ul>`;
+                } else {
+                    tabsContainer.classList.remove('hidden');
+                    contentContainer.classList.remove('hidden');
+                    searchResultsContainer.classList.add('hidden');
+                    searchResultsContainer.innerHTML = '';
+                }
+            }
+
+            searchInput.addEventListener('input', handleSearch);
 
             render();
         });
